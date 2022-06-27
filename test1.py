@@ -8,14 +8,12 @@ import xml.etree.ElementTree as et
 
 import psycopg2
 
-# import requests # pip install requests
-# from lxml import etree # pip install lxml
-
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SAMPLE_SPREADSHEET_ID = '1LTejK-Oo7L1bFreBIIcEZnF1W1RCC1s_jos3EuIP0jI'
 SAMPLE_RANGE_NAME = 'Лист1!A2:D'
 
+# Получение данных из таблицы google sheets
 def google_api():
     creds = service_account.Credentials.from_service_account_file('token.json', scopes=SCOPES)
     service = build('sheets', 'v4', credentials=creds)
@@ -24,14 +22,14 @@ def google_api():
     values = result.get('values', [])
     return values
 
-
+# получение курсa доллара США с сайта Центрального Банка РФ
 def rate_d_r():
     xml_response = et.fromstring(requests.get("https://cbr.ru/scripts/XML_daily.asp").text.encode("1251"))
     rate = xml_response.find("Valute[@ID='R01235']/Value").text.replace(',', '.')
     rate = float(rate)
     return rate
 
-
+# Заполнение базы данных из прочитанной таблицы google sheets
 def infill_table(values):
     rate = rate_d_r()
     try:

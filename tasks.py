@@ -9,6 +9,10 @@ import xml.etree.ElementTree as et
 
 import psycopg2
 
+from celery import Celery
+from celery.schedules import crontab
+
+
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SAMPLE_SPREADSHEET_ID = '1LTejK-Oo7L1bFreBIIcEZnF1W1RCC1s_jos3EuIP0jI'
@@ -60,10 +64,7 @@ def infill_table(values):
         print('NOT OK ', datetime.datetime().now())
 
 
-from celery import Celery
-from celery.schedules import crontab
-
-
+# Настройка celery+redis+tasks.py
 app = Celery('tasks', broker='redis://localhost:6379/0')
 app.conf.beat_schedule = {
     'update_data-every-single-minute': {
@@ -71,8 +72,6 @@ app.conf.beat_schedule = {
         'schedule': crontab(),  # change to `crontab(minute=0, hour=0)` if you want it to run daily at midnight
     },
 }
-
-
 
 
 @app.task

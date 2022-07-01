@@ -1,3 +1,0 @@
-pip install google-auth
-pip install apiclient
-

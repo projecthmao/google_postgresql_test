@@ -1,3 +1,4 @@
+import datetime
 
 from googleapiclient.discovery import build
 
@@ -8,17 +9,13 @@ import xml.etree.ElementTree as et
 
 import psycopg2
 
-#555555577777
-#555555577777
-
-#555555577777
-#555555577777
-# slksdflkjdflk
-# slksdflkjdflk
+# from celery import Celery
+# from celery.schedules import crontab
 
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 SAMPLE_SPREADSHEET_ID = '1LTejK-Oo7L1bFreBIIcEZnF1W1RCC1s_jos3EuIP0jI'
+                        
 SAMPLE_RANGE_NAME = 'Лист1!A2:D'
 
 # Получение данных из таблицы google sheets
@@ -61,18 +58,33 @@ def infill_table(values):
             cursor.execute(postgres_insert_query, (num_pp, zakaz, sum_d, sum_r, date))
         connection.commit()
         connection.close()
-        print('OK')
+        print('OK ', datetime.datetime.now())
     except:
-        print('NOT OK')
+        print('NOT OK ', datetime.datetime().now())
 
 
 
+# if __name__ == '__main__':
+#     app = Celery()
+#     app.conf.broker_url = "redis://localhost:6379/0"
+#     # app.config_from_object('django.conf:settings')
 
+#     # Load task modules from all registered Django app configs.
+#     app.autodiscover_tasks()
+#     app.conf.beat_schedule = {
+#         'update_data-every-single-minute': {
+#             'task': 'data.tasks.update_data',
+#             'schedule': crontab(),  # change to `crontab(minute=0, hour=0)` if you want it to run daily at midnight
+#         },
+#     }    
+
+
+from celery2 import app
+
+@app.task
 def main():
     values = google_api()
     infill_table(values)
-
-
 
 
 if __name__ == '__main__':

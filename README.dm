@@ -27,6 +27,6 @@ pip install Celery
         redis-server
     
     
-    2) во первом запустить сервис Celery:
+    2) во втором запустить сервис Celery:
         
         celery -A tasks worker -B --loglevel=DEBUG
